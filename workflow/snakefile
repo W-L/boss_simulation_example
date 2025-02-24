@@ -1,4 +1,4 @@
-from workflow.config.otu_info import otus_clean_names, otus_no_plasmids, genome_sizes
+from config.otu_info import otus_clean_names, otus_no_plasmids, genome_sizes
 
 
 # load config specific to this simulation
