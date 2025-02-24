@@ -1,0 +1,13 @@
+
+
+ref: 'data/zymo.fa'
+conditions:
+  - 'boss'
+  - 'control'
+max_timepoint: 9
+mu: 400
+
+
+
+
+
