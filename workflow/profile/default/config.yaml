@@ -11,19 +11,9 @@ sdm:
 
 
 set-threads:
-  map_paf: 12
+  map_paf: 4
   map_sam: 4
   pileup: 4
-
-set-resources:
-  map_paf:
-    mem_mb: 16000
-  separate_target:
-    mem_mb: 8000
-  map_sam:
-    mem_mb: 8000
-  pileup:
-    mem_mb: 8000
 
 
 groups:
