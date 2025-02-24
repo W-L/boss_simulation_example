@@ -78,7 +78,7 @@ nreads <- ggplot(
   geom_line(linewidth=1) +
   facet_wrap(~otu, scales="free_y", nrow = nrow) +
   scale_color_manual(values=ptol_10, guide = "none") +
-  ylab("# reads") +
+  ylab("# reads")
 # nreads
 
 meanc <- ggplot(
@@ -87,7 +87,7 @@ meanc <- ggplot(
   geom_line(linewidth=1) +
   facet_wrap(~otu, scales="free_y", nrow = nrow) +
   scale_color_manual(values=ptol_10, guide = "none") +
-  ylab("mean coverage") +
+  ylab("mean coverage")
 # meanc
 
 lowc <- ggplot(
@@ -96,7 +96,7 @@ lowc <- ggplot(
   geom_line(linewidth=1) +
   facet_wrap(~otu, scales="free_y", nrow = nrow) +
   scale_color_manual(values=ptol_10, guide = "none") +
-  ylab("prop. sites at <5x") +
+  ylab("prop. sites at <5x")
 # lowc
 
 
