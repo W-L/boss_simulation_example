@@ -140,7 +140,10 @@ rule visualise_simulation:
     conda: "envs/visualisation.yaml"
     localrule: True
     shell:
-        "Rscript workflow/scripts/visualise_simulation.R {input.coverage} {input.unblocks} {output}"
+        "Rscript workflow/scripts/visualise_simulation.R "
+        " --input_cov {input.coverage} " 
+        " --input_unb {input.unblocks} " 
+        " --output {output} "
 
 
 
