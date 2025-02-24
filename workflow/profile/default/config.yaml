@@ -1,8 +1,8 @@
 
 default-resources:
-	mem_mb: 1000
-	cpus_per_task: 1
-	runtime: 10
+  mem_mb: 1000
+  cpus_per_task: 1
+  runtime: 10
 
 printshellcmds: True
 
@@ -27,10 +27,10 @@ set-resources:
 
 
 groups:
-  - record_unblocks: UNBLOCK
-  - separate_target: SEPARATE
+  - record_unblocks=UNBLOCK
+  - separate_target=SEPARATE
 
 group-components:
-  - UNBLOCK: 100
-  - SEPARATE: 10
+  - UNBLOCK=100
+  - SEPARATE=10
 
