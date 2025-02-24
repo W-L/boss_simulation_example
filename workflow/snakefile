@@ -1,0 +1,147 @@
+from workflow.config.otu_info import otus_clean_names, otus_no_plasmids, genome_sizes
+
+
+# load config specific to this simulation
+configfile: "workflow/config/config.yaml"
+
+
+ref = config['ref']
+conditions = config['conditions']
+mu = config['mu']
+timepoints = list(range(config['max_timepoint'] + 1))
+otus_cleaned = list(set(otus_clean_names.values()))
+otus_no_plasmids_rev = {v: k for k, v in otus_no_plasmids.items()}
+
+
+
+rule all:
+    input:
+        'results/unblocks.csv',
+        'results/coverage.csv',
+        'results/simulation.pdf'
+
+
+
+rule map_paf:
+    # map the reads from the simulation to a reference containing all species
+    # this is done to separate the reads by target species
+    input: "00_reads/{cond}_{time}.fa"
+    output: "01_paf/{cond}_{time}.paf"
+    params:
+        ref = ref,
+    conda: "envs/simulation.yaml"
+    shell:
+        "minimap2 -x map-ont -t {threads} --secondary=no -c {params.ref} {input} >{output}"
+
+
+
+
+rule separate_target:
+    # separates the reads by target species using the mappings
+    # this results in files per: condition_time_otu.fq
+    input:
+        reads = "00_reads/{cond}_{time}.fa",
+        paf = "01_paf/{cond}_{time}.paf"
+    output: expand("02_sep_target/{{cond}}_{{time}}_{otu}.fq", otu=otus_cleaned)
+    conda: "envs/simulation.yaml"
+    shell:
+        "python workflow/scripts/separate_by_target.py {input.paf} {input.reads} && "
+        "mv {wildcards.cond}_{wildcards.time}_*.fq 02_sep_target/ "
+
+
+
+
+rule map_sam:
+    # we map the reads again, but this time only to the identified target species
+    # the alignments are sorted, converted to bam, and indexed
+    input:
+        reads = "02_sep_target/{cond}_{time}_{otu}.fq",
+    output:
+        bam = "03_bams/{cond}_{time}_{otu}.bam",
+        bai = "03_bams/{cond}_{time}_{otu}.bam.bai"
+    params:
+        ref=ref,
+        otu_raw=lambda w: otus_no_plasmids_rev[w.otu]
+    conda: "envs/simulation.yaml"
+    shell:
+        "mkdir -p data/zymo_otu && "
+        "python workflow/scripts/extract_sequence.py {params.ref} {params.otu_raw} > data/zymo_otu/{wildcards.otu}.fa && "
+        "minimap2 -ax map-ont -t {threads} --secondary=no --sam-hit-only -c data/zymo_otu/{wildcards.otu}.fa {input.reads} | "
+        "samtools sort -@ {threads} | samtools view -b >{output.bam} && "
+        "samtools index -@ {threads} {output.bam}"
+
+
+
+rule pileup:
+    # create a pileup from the mappings of each otu at each timepoint
+    # the python script extracts the mean coverage and proportion of low coverage sites from the pileup
+    input:
+        bam = "03_bams/{cond}_{time}_{otu}.bam",
+        bai = "03_bams/{cond}_{time}_{otu}.bam.bai"
+    output:
+        pup = "04_pup/{cond}_{time}_{otu}.pup",
+        pup_csv = "04_pup/{cond}_{time}_{otu}.csv",
+    params:
+        genome_size=lambda w: genome_sizes[w.otu]
+    conda: "envs/simulation.yaml"
+    shell:
+        "samtools mpileup -Q 0 {input.bam} > {output.pup} && "
+        "python workflow/scripts/process_pileup.py {output.pup} {params.genome_size} > {output.pup_csv}"
+
+
+
+
+rule record_unblocks:
+    # count the number of total reads and unblocked reads for each otu at each timepoint
+    # since it's a simulation we can just check which reads are mu-sized to identify unblocked reads
+    input:
+        "02_sep_target/{cond}_{time}_{otu}.fq"
+    output:
+        '05_rejected/{cond}_{time}_{otu}.csv'
+    params:
+        mu = mu
+    conda: "envs/simulation.yaml"
+    shell:
+        "python workflow/scripts/record_unblocks.py {input} {params.mu} > {output}"
+
+
+
+rule create_unblock_dataframe:
+    # merge the unblock counts into a single csv
+    input:
+        expand("05_rejected/{cond}_{time}_{otu}.csv", cond=conditions, time=timepoints, otu=otus_cleaned),
+    output:
+        "results/unblocks.csv"
+    localrule: True
+    shell:
+        "cat <(echo cond,time,otu,total,unb,unb_ratio) {input} > {output}"
+
+
+
+rule create_coverage_dataframe:
+    # merge the coverage data into a single csv
+    input:
+        expand("04_pup/{cond}_{time}_{otu}.csv", cond=conditions, time=timepoints, otu=otus_cleaned),
+    output:
+        "results/coverage.csv"
+    localrule: True
+    shell:
+        "cat <(echo cond,time,otu,mean_coverage,low_coverage_prop) {input} > {output}"
+
+
+
+rule visualise_simulation:
+    # create a pdf with some visualisations of the simulation
+    input:
+        coverage="results/coverage.csv",
+        unblocks="results/unblocks.csv"
+    output:
+        "results/simulation.pdf"
+    conda: "envs/visualisation.yaml"
+    localrule: True
+    shell:
+        "Rscript workflow/scripts/visualise_simulation.R {input.coverage} {input.unblocks} {output}"
+
+
+
+
