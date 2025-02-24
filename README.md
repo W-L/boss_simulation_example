@@ -51,28 +51,11 @@ So the files in 00_reads are written 'asynchronously' for the two conditions, bu
 
 
 ```
-snakemake -c 4 
+snakemake -c 4 --workflow-profile workflow/profile/default
 ```
 
-
-These are the visualized results of the simulation run:
-
+<img src="rules.png" alt="rulegraph" width="200"/>
 
 
-
-
-# TO DO
-
-write proper docstrings etc in the scripts
-
-write grouping info into a profile
-
-create a config file
-
-add the final results
-
-add a dag 
-
-
-push changes of boss to gh and create a new release
+An example visualisation of the simulation can be found in the results directory
 
