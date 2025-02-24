@@ -1,0 +1,15 @@
+[general]
+name = "sim"
+ref = "data/zymo.fa"
+
+
+[simulation
+fq = "data/ERR3152366_100k.fq"
+batchsize = 1000
+maxb = 30
+binit = 10
+dumptime = 7_000_000
+paf_full = "data/ERR3152366_100k.paf"
+paf_trunc = "data/ERR3152366_100k_trunc.paf"
+
+
