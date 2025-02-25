@@ -3,13 +3,20 @@
 ## Get the data
 
 
-Download and extract the reference genomes from zymo. For simplicity, we exclude the yeast genomes here.
+Download and extract the reference genomes from zymo. 
 
 ```
 wget https://s3.amazonaws.com/zymo-files/BioPool/ZymoBIOMICS.STD.refseq.v2.zip -O data/zymo.zip
 unzip data/zymo.zip -d data/zymo
-rm data/zymo/ZymoBIOMICS.STD.refseq.v2/Genomes/Saccharomyces_cerevisiae_draft_genome.fasta data/zymo/ZymoBIOMICS.STD.refseq.v2/Genomes/Cryptococcus_neoformans_draft_genome.fasta
-cat data/zymo/ZymoBIOMICS.STD.refseq.v2/Genomes/*.fasta >data/zymo.fa
+```
+
+Merge a subset of the genomes into a single file that we use as reference for the simulation.
+
+```
+cat data/zymo/ZymoBIOMICS.STD.refseq.v2/Genomes/Listeria_monocytogenes_complete_genome.fasta\
+ data/zymo/ZymoBIOMICS.STD.refseq.v2/Genomes/Pseudomonas_aeruginosa_complete_genome.fasta\
+ data/zymo/ZymoBIOMICS.STD.refseq.v2/Genomes/Bacillus_subtilis_complete_genome.fasta\
+ data/zymo/ZymoBIOMICS.STD.refseq.v2/Genomes/Escherichia_coli_complete_genome.fasta >data/zymo.fa
 ```
 
 Download, extract and subset some sequencing reads from zymo log
