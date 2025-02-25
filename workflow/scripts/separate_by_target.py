@@ -1,7 +1,13 @@
 import sys
+from os import path
+PARENT_DIR = path.dirname(path.dirname(path.abspath(__file__)))
+sys.path.append(PARENT_DIR)
+
 import numpy as np
-from workflow.config.otu_info import otus_clean_names
+
+from config.otu_info import otus_clean_names   # noqa
 from readfq import readfq
+
 
 """
 this script is used to separate a fq file into multiple fqs given the mappings in a paf or sam file 
