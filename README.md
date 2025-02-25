@@ -61,8 +61,12 @@ So the files in 00_reads are written 'asynchronously' for the two conditions, bu
 snakemake -c 4 --workflow-profile workflow/profile/default
 ```
 
-<img src="rules.png" alt="rulegraph" width="400"/>
+This is the rulegraph of the workflow:
+
+<img src="rules.png" alt="rulegraph" width="300"/>
 
 
-An example visualisation of the simulation can be found in the results directory
+This visualisation of the simulation is the final result of the workflow:
 
+
+<img src="results/simulation.png" alt="simulation" width="600"/>
