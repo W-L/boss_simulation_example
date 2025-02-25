@@ -6,20 +6,9 @@ library(patchwork)
 theme_set(theme_minimal())
 
 
-ptol_10 <- c(
-  "#332288",
-  "#88CCEE",
-  "#44AA99",
-  "#117733",
-  "#999933",
-  "#DDCC77",
-  "#661100",
-  "#CC6677",
-  "#882255",
-  "#AA4499"
-)
+ptol <- c("#CC6677","#332288","#DDCC77","#117733","#88CCEE","#882255","#44AA99","#999933","#AA4499")
 
-nrow <- 2
+nrow <- 1
 
 
 get_arguments <- function() {
@@ -67,7 +56,7 @@ unb_plot <- ggplot(
     mapping=aes(x=time, y=unb_ratio, color=otu, group=otu)) +
   geom_line(linewidth=1) +
   geom_point() +
-  scale_color_manual(values=ptol_10) +
+  scale_color_manual(values=ptol) +
   ylab("prop. rejected reads") +
   theme(legend.position = "none")
 # unb_plot
@@ -77,7 +66,7 @@ nreads <- ggplot(
     mapping=aes(x=time, y=total, linetype=cond, colour=otu)) +
   geom_line(linewidth=1) +
   facet_wrap(~otu, scales="free_y", nrow = nrow) +
-  scale_color_manual(values=ptol_10, guide = "none") +
+  scale_color_manual(values=ptol, guide = "none") +
   ylab("# reads")
 # nreads
 
@@ -86,7 +75,7 @@ meanc <- ggplot(
     mapping=aes(x=time, y=mean_coverage, linetype=cond, colour=otu)) +
   geom_line(linewidth=1) +
   facet_wrap(~otu, scales="free_y", nrow = nrow) +
-  scale_color_manual(values=ptol_10, guide = "none") +
+  scale_color_manual(values=ptol, guide = "none") +
   ylab("mean coverage")
 # meanc
 
@@ -95,24 +84,25 @@ lowc <- ggplot(
     mapping=aes(x=time, y=low_coverage_prop, linetype=cond, colour=otu)) +
   geom_line(linewidth=1) +
   facet_wrap(~otu, scales="free_y", nrow = nrow) +
-  scale_color_manual(values=ptol_10, guide = "none") +
+  scale_color_manual(values=ptol, guide = "none") +
   ylab("prop. sites at <5x")
 # lowc
 
 
 
-layout <- ((unb_plot | nreads) / (meanc | lowc) / guide_area()) +
+layout <- (unb_plot / nreads / meanc / lowc / guide_area()) +
   plot_annotation(tag_levels = "A") +
-  plot_layout(guides="collect", heights=c(1, 1, 0.3)) &
+  plot_layout(guides="collect", heights=c(1, 1, 1, 1, 0.2)) &
   xlab("seq. time (intervals)") &
   theme(
     legend.position = "bottom",
     legend.title = element_blank(),
-    strip.text.x = element_blank()
+    strip.text.x = element_blank(),
+    plot.background = element_rect(fill = "white", color = NA)
   )
 
 
-ggsave(output, layout, w=15, h=8)
+ggsave(output, layout, w=7, h=10)
 
 
 
