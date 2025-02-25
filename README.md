@@ -28,6 +28,13 @@ head -n 400000 data/ERR3152366.fastq >data/ERR3152366_100k.fq
 ```
 
 
+Create a conda environment with the necessary dependencies for the simulation and analysis.
+
+```
+conda env create -f env.yaml -n boss_simulation
+conda activate boss_simulation
+```
+
 Run the snakemake pipeline that prepares reads for simulations, i.e. that maps the reads and creates the offset files for fast sampling. 
 This pipeline is part of the BOSS-RUNS repository (adjust path to snakefile).
 
