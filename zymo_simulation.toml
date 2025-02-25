@@ -3,7 +3,7 @@ name = "sim"
 ref = "data/zymo.fa"
 
 
-[simulation
+[simulation]
 fq = "data/ERR3152366_100k.fq"
 batchsize = 1000
 maxb = 30
