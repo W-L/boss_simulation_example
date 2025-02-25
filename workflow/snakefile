@@ -18,7 +18,7 @@ rule all:
     input:
         'results/unblocks.csv',
         'results/coverage.csv',
-        'results/simulation.pdf'
+        'results/simulation.png'
 
 
 
@@ -136,7 +136,7 @@ rule visualise_simulation:
         coverage="results/coverage.csv",
         unblocks="results/unblocks.csv"
     output:
-        "results/simulation.pdf"
+        "results/simulation.png"
     conda: "envs/visualisation.yaml"
     localrule: True
     shell:
